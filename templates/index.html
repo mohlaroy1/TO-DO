@@ -10,8 +10,8 @@
         <div class="head">
             <h1>To-Do List</h1>
             <div style="display: flex; align-items: center;">
-                <h3>User</h3>
-                <a href="./login.html" style="text-decoration: none; color: red;">
+                <h3>{{ request.user.username }}</h3>
+                <a href="{% url 'logout' %}" style="text-decoration: none; color: red;">
                 Log out
                 </a>
             </div>
@@ -24,7 +24,7 @@
               <input type="text" name="title" placeholder="Title..." required>
               <input type="date" name="deadline">
               <select name="status">
-                  {% for status in statuses%}
+                  {% for status in statuses %}
                       <option class="opt" value="{{ status }}">
                           {{ status }}
                       </option>
@@ -38,27 +38,30 @@
           </form>
       </div>
       <hr style="margin: 10px 5px;">
-
-      {% for t in task %}
-      <div class="task">
+        {% for task in tasks %}
+            <div class="task">
         <ul id="task-list">
           <li>
               <div>
-                  {{ t.title }}
+                  {{ task.title }}
               </div>
               <div>
-                    <input type="text" value="{{ t.status }}" readonly >
-                    <input type="date" value="{{ t.deadline|date:'d.m.Y' }}" readonly >
-                    <button type="submit" class="edit"><a href="./edit.html">Edit</a></button>
-                    <button type="submit" class="delete"><a href="./edit.html">Delete</a></button>
+                    <input type="text" value="{{ task.status }}" readonly >
+                    {% if task.deadline %}
+                        <input type="date" value="{{ task.deadline|date:'Y-m-d' }}" readonly>
+                    {% endif %}
+                    <button type="submit" class="edit"><a href="{% url 'task-update' task.id %}">Edit</a></button>
+                    <button type="submit" class="delete"><a href="#">Delete</a></button>
               </div>
           </li>
         </ul>
-        <ul class="details">
-            {{ t.details }}
-        </ul>
+        {% if task.details %}
+            <ul class="details">
+                {{ task.details }}
+            </ul>
+        {% endif %}
       </div>
-      {% endfor %}
+        {% endfor %}
     </div>
   </body>
 </html>

@@ -8,4 +8,5 @@ urlpatterns = [
 
     path('auth/', include('users.urls')),
 
+
 ]
