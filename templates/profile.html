@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:linear-gradient(135deg,#667eea,#764ba2);
+      padding:20px;
+    }
+
+    .profile-box{
+      width:100%;
+      max-width:700px;
+      background:#fff;
+      border-radius:25px;
+      padding:35px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:30px;
+    }
+
+    .top h1{
+      color:#333;
+      font-size:32px;
+    }
+
+    .edit-btn{
+      border:none;
+      padding:12px 20px;
+      border-radius:12px;
+      background:linear-gradient(135deg,#667eea,#764ba2);
+      color:white;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .edit-btn:hover{
+      opacity:.9;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .input-box{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .full{
+      grid-column:span 2;
+    }
+
+    label{
+      font-size:14px;
+      font-weight:600;
+      color:#444;
+    }
+
+    input{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid #ddd;
+      background:#f7f8ff;
+      font-size:15px;
+      outline:none;
+      transition:.3s;
+    }
+
+    input:focus{
+      border-color:#667eea;
+      box-shadow:0 0 0 4px rgba(102,126,234,.15);
+      background:white;
+    }
+
+    input:disabled{
+      cursor:not-allowed;
+      color:#555;
+    }
+
+    .actions{
+      margin-top:25px;
+      display:none;
+      justify-content:flex-end;
+      gap:10px;
+    }
+
+    .actions.active{
+      display:flex;
+    }
+
+    .save-btn,
+    .cancel-btn{
+      border:none;
+      padding:12px 20px;
+      border-radius:12px;
+      color:white;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .save-btn{
+      background:#16a34a;
+    }
+
+    .cancel-btn{
+      background:#ef4444;
+    }
+
+    @media(max-width:700px){
+      .form-grid{
+        grid-template-columns:1fr;
+      }
+
+      .full{
+        grid-column:span 1;
+      }
+
+      .top{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="profile-box">
+
+    <div class="top">
+      <h1>My Profile</h1>
+      <div style="display:flex; align-items:center; gap:15px;">
+      <a href="{% url 'home' %}" style="text-decoration:none; color:#667eea; font-weight:600; font-size:18px;">← Home</a>
+      <button class="edit-btn" onclick="enableEdit()">
+        Edit Profile
+      </button>
+      </div>
+    </div>
+
+    <form method="post" action="{% url 'update-account' %}">
+        {% csrf_token %}
+        <div class="form-grid">
+
+        <div class="input-box">
+          <label>Ism</label>
+          <input type="text" name="first_name" value="{% if request.user.first_name %}{{ request.user.first_name }}{% endif %}" required>
+        </div>
+
+        <div class="input-box">
+          <label>Familiya</label>
+          <input type="text" name="last_name" value="{% if request.user.last_name %}{{ request.user.last_name }}{% endif %}">
+        </div>
+
+        <div class="input-box">
+          <label>Username</label>
+          <input type="text" name="username" value="{{ request.user.username }}" required>
+        </div>
+
+        <div class="input-box">
+          <label>Email</label>
+          <input type="email" name="email" value="{% if request.user.email %}{{ request.user.email }}{% endif %}" required>
+        </div>
+
+        <div class="input-box">
+          <label>Yangi parol kiriting</label>
+          <input type="password" name="password">
+        </div>
+
+        <div class="input-box">
+          <label>Qo'shilgan sana</label>
+          <input type="text" value="{{ request.user.date_joined|date:'d.m.Y' }}" disabled>
+        </div>
+
+      </div>
+
+      <div class="actions" id="actions">
+        <button type="button" class="cancel-btn" onclick="cancelEdit()">
+          Cancel
+        </button>
+
+        <button type="submit" class="save-btn">
+          Save
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll("input");
+    const actions = document.getElementById("actions");
+
+    function enableEdit(){
+      inputs.forEach(input => {
+        if(input.type !== "text" || input.value !== "07 May 2026"){
+          input.disabled = false;
+        }
+      });
+
+      actions.classList.add("active");
+    }
+
+    function cancelEdit(){
+      inputs.forEach(input => {
+        input.disabled = true;
+      });
+
+      actions.classList.remove("active");
+    }
+
+
+  </script>
+
+</body>
+</html>

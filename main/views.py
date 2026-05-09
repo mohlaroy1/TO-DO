@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 
 class HomeView(LoginRequiredMixin, View):
-    login_url = '/auth/login/'
+    login_url = 'auth'
 
     def get(self, request):
         statuses = [status[0] for status in STATUS]
@@ -41,7 +41,7 @@ class TaskUpdateView(View):
                 'statuses': statuses,
             }
             return render(request, 'edit.html', context)
-        return redirect('login')
+        return redirect('auth')
 
     def post(self, request, pk):
         task = get_object_or_404(Task, pk=pk)
@@ -50,3 +50,12 @@ class TaskUpdateView(View):
         task.status = request.POST['status']
         task.save()
         return redirect('home')
+
+
+def delete_task(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+
+    if request.method == 'POST':
+        task.delete()
+
+    return redirect('home')
